@@ -2,6 +2,8 @@
 #ifndef SORTS_H
 #define SORTS_H
 #include <iostream>
+#include <stack>
+#include "MyRand.h"
 using namespace std;
 
 double gettime(int restart=0);
@@ -42,15 +44,18 @@ template <typename T> void Bubble(T *a, int size)	// 冒泡排序
 	int i, j;
 	for(i=1; i<size; i++)							// 共进行 size-1 轮比较和交换
 	{
+		bool flag = true;
 		for(j=0; j<size-i; j++)
 		{
 			if(a[j] > a[j+1])						// 相邻元素之间比较，必要时
 			{
+				flag = false;
 				temp = a[j];						// 交换 a[j] 与 a[j+1]
 				a[j] = a[j+1];
 				a[j+1] = temp;
 			}
 		}
+		if (flag) { break; }
 	}
 }
 
@@ -60,6 +65,7 @@ template <typename T> void Select(T *a, int size)	// 选择排序
 	int i, j, k=0;
 	for(i=1; i<size; i++)							// 循环size-1次
 	{
+		bool flag = false;
 		for(j=i; j<size; j++)
 			if(a[j] < a[k])
 				k = j;								// 找出当前范围内"最小"元素的下标
@@ -68,31 +74,47 @@ template <typename T> void Select(T *a, int size)	// 选择排序
 			temp = a[k];
 			a[k] = a[i-1];
 			a[i-1] = temp;
+			flag = true;
 		}
 		k = i;
+		if (!flag) {
+			break;
+		}
 	}
 }
 
-template <typename T> void Qsort(T *a, int size)	// 快速排序
+template <typename T>
+void Qsort(T *a, int size)
 {
-	T pivot, temp;
-	int left=0, right=size-1;						// 下标（整数）
+	using std::pair;
+	using std::stack;
 
-	if(size<=1) return;
+	stack<pair<int, int>> stk;
+	stk.emplace(0, size - 1);
 
-	pivot = a[right];								// 选择最后一个值为分界值
-	do
-	{
-		while(left<right && a[left]<=pivot) left++;	// 此处 "<=" 是让与分界值相等的元素暂时留在原地
-		while(left<right && a[right]>=pivot)right--;// 此处 ">=" 是让与分界值相等的元素暂时留在原地
-		if(left < right)
-		{
-			temp=a[left]; a[left]=a[right]; a[right]=temp;
+	while (!stk.empty()) {
+		auto [left, right] = stk.top(); stk.pop();
+		if (left >= right) continue;   // 区间长度<=1，直接跳过
+
+		// 随机选择pivot，交换到右端
+		int id = UniformRand(left, right);
+		T pivot = a[id];
+		std::swap(a[id], a[right]);
+
+		// 双指针partition
+		int i = left, j = right - 1;
+		while (i <= j) {
+			while (i <= j && a[i] <= pivot) ++i;
+			while (i <= j && a[j] >= pivot) --j;
+			if (i < j) std::swap(a[i], a[j]);
 		}
-	}while(left < right);
-	a[size-1] = a[left]; a[left] = pivot;			// 找到分界点 left
-	Qsort(a, left);									// 递归调用(左侧部分)
-	Qsort(a+left+1, size-left-1);					// 递归调用(右侧部分)
+		// 把pivot放到正确的位置
+		std::swap(a[i], a[right]);
+
+		// 左半部分[left, i-1]  右半部分[i+1, right]
+		stk.emplace(left, i - 1);
+		stk.emplace(i + 1, right);
+	}
 }
 
 #endif
