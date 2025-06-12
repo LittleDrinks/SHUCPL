@@ -1,7 +1,5 @@
-2班17组.zip
-2班17组
-*.docx
 .github
 .vscode
 .idea
 cmake-build-debug
+.reference
