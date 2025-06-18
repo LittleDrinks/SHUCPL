@@ -11,6 +11,7 @@
 
 
 -   [ ] 安装CMake，并使用 `cmake --version` 验证安装
+-   [ ] 将 g++ 添加至环境变量
 -   [ ] 安装 Clion（可参考 [CLion安装、配置、使用、调试（完全小白向）](https://blog.csdn.net/annesede/article/details/133940779) ）
 -   [ ] 从学习通中下载所有的代码文件（`Sorts`、`kbMIDI`、`SortShow排序秀`、`SortShow排序秀(NEW)`）
 -   [ ] 使用 Clion 打开任意一个文件夹，如果出现文件编码问题，选择 GBK 后重新加载
@@ -37,6 +38,8 @@
 ```
 
 
+
+*如果运行失败，请尝试去除路径中的中文*
 
 如果遇到栈溢出问题（`exit code -1073741571 (0xC00000FD)`），可以暂时将 `Main.cpp` 第 47 行的 $n$ 设为 `8192`
 
@@ -79,6 +82,9 @@ target_link_libraries(KbMIDI winmm) # 添加这一句
 
 
 -   [ ] 点击任务栏的运行，在 `cmake-build-debug` 目录下找到 `.exe` 文件，直接双击运行确认编译成功
+-   在任务栏“运行——编辑配置”中勾选在外部控制台运行，以达到更好的显示效果
+
+
 
 
 -   [ ] 打开 `SortShow排序秀` 完成类似的配置工作
@@ -159,6 +165,8 @@ target_link_libraries(KbMIDI winmm) # 添加这一句
 # MIDI 实现优化算法可视化及设计歌曲
 
 
+
+[参考链接](https://www.bilibili.com/opus/775532688542007328)
 
 
 
