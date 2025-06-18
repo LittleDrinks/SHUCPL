@@ -4,6 +4,34 @@
 #include <time.h>			// 或 <ctime>
 #include <conio.h>
 
+/* test function defined in SortShow.h
+int main() {
+	Init();
+	while (1) {
+		bool flag = true;
+		system("cls");
+		int choice = getch();
+		switch (choice) {
+			case '1':
+				ShowText(3, 5, 14, 1, "按回车键继续");
+				while (getch() != '\r');
+				system("cls");
+				break;
+			case '2':
+				ShowText(3, 5, 13, 5, "按回车键继续");
+				while (getch() != '\r');
+				system("cls");
+				break;
+			case 'q':
+				flag = false; break;
+		}
+		if (!flag) { break; }
+	}
+	Quit();
+}
+*/
+
+
 int main()
 {
 	char text[100];
@@ -12,6 +40,7 @@ int main()
 						"3 ---- 选择排序........(S)",
 						"4 ---- 归并排序........(M)",
 						"5 ---- 快速排序........(Q)",
+						"6 ---- 插入排序........(I)",
 						"0 ---- 退出..........(ESC)",
 						"请选择: "};
 	int choice, n = sizeof(str)/sizeof(*str);
@@ -66,11 +95,17 @@ int main()
 					Start();
 					Quick_Sort(array, N);
 					Finish();					break;
+		case '6':
+		case 'i':
+		case 'I':	col1 = 40;
+					SetConsoleTitle("插入排序（Insertion Sorting）");
+					Start();
+					Insert_Sort(array, N);
+					Finish();
 		}
 		sprintf(text, "按回车键继续...");
 		ShowText(79-strlen(text), top+N+6, 0, 7, text);
-		while(getch()!='\r')
-			;
+		while(getch()!='\r');
 	}
 	Quit();
 	return 0;

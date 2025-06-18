@@ -50,6 +50,27 @@ void Select_Sort(int *array, int length)	// —°‘Ò≈≈–Ú
 	ShowText(col1-4, top+length, 0, 15, "   ");
 }
 
+void Insert_Sort(int *array, int length) {
+	for (int i = 1; i < length; i++) {
+		int k = i;
+		ShowText(col1-4, top+i, 0, 15, "NOW");
+		for (int j = 0; j < i; j++) {
+			ShowText(col1-8, top+j, 0, 15, "INS");
+			if (array[j] > array[i]) {
+				k = j; break;
+			} else {
+				ShowBars(col1, top+j, array[j], col1, top+i, array[i]);
+			}
+			ShowText(col1-8, top+j, 0, 15, "   ");
+		}
+		for (int j = i; j > k; --j) {
+			SWAP(array, j, j-1);
+		}
+		ShowText(col1-8, top+k, 0, 15, "   ");
+		ShowText(col1-4, top+i, 0, 15, "   ");
+	}
+}
+
 void Merge_Sort(int *a, int size)
 {
 	int r = 2;

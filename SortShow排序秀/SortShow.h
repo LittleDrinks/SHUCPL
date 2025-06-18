@@ -51,6 +51,7 @@ double gettime(int restart=0);
 
 void Bubble_Sort(int *array, int length);	// √∞≈›≈≈–Ú
 void Select_Sort(int *array, int length);	// —°‘Ò≈≈–Ú
+void Insert_Sort(int *array, int length);   // ≤Â»Î≈≈–Ú
 void Merge_Sort(int *array, int length);	// πÈ≤¢≈≈–Ú
 void Quick_Sort(int *array, int lengthn);	// øÏÀŸ≈≈–Ú
 

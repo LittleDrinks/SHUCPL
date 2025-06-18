@@ -12,6 +12,7 @@ add_executable(SortShow
         Main.cpp
         Sorts_Show.cpp
         SortShow.cpp
-        SortShow.h)
+        SortShow.h
+)
 
 target_link_libraries(SortShow winmm) # 添加这一句

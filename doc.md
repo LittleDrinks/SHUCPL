@@ -41,7 +41,7 @@
 
 *如果运行失败，请尝试去除路径中的中文*
 
-如果遇到栈溢出问题（`exit code -1073741571 (0xC00000FD)`），可以暂时将 `Main.cpp` 第 47 行的 $n$ 设为 `8192`
+如果遇到栈溢出问题（`exit code -1073741571 (0xC00000FD)`），可以暂时将 `Main.cpp` 第 47 行的 $n$ 设为 `8192`。如果您想知道为什么，请自行搜索递归与系统栈的关系。
 
 
 
@@ -57,6 +57,8 @@
 
 -   [ ] 打开 `kbMIDI`文件夹，在任务栏点击“工具——CMake——创建 CMakeLists.txt”配置 CMakeList，选中所有 `*.h*` 和`*.cpp*`文件
 -   [ ] 对照下方的 `CMakeLists.txt` 添加命令，确保编译时可以链接到 winmm.lib
+
+*或在编译命令中添加 `-lwinmm` 参数*
 
 
 
@@ -142,9 +144,9 @@ target_link_libraries(KbMIDI winmm) # 添加这一句
 
 
 
-使用 Clion 编译后会在目录下产生一个 `cmake-build-debug` 目录，里面有一个 `Sorts.exe`，将下发的 Release 文件夹中 `run.bat` 等文件拷贝到 `Sorts.exe` 同目录下，在命令行中运行 `run.bat`，等待运行完成后打开 `results.xlsx` 和 `results_release.txt`，选中 `results.xlsx` 中左上角的单元格，将 `results_release.txt` 中的内容复制到 `xlsx` 中，图表会对应更新。
+使用 Clion 编译后会在目录下产生一个 `cmake-build-debug` 目录，里面有一个 `Sorts.exe`，将下发的 Release 文件夹中 `run.bat` 等文件拷贝到 `Sorts.exe` 同目录下，在同目录的命令行中运行 `run.bat`，等待运行完成后打开 `results.xlsx` 和 `results_release.txt`，选中 `results.xlsx` 中左上角的单元格，将 `results_release.txt` 中的内容复制到 `xlsx` 中，图表会对应更新。
 
-*`Debug` 和 `Release` 目录下提供的 `run.bat` 仅有文件名和提示词的不同。*
+*`Debug` 和 `Release` 目录下提供的 `run.bat` 仅有文件名和提示语的不同。*
 
 
 
@@ -154,11 +156,123 @@ target_link_libraries(KbMIDI winmm) # 添加这一句
 
 可能的优化思路：
 
--   在数据有序时直接退出
--   减少无用的交换、判断、循环
 -   手写栈代替系统栈防止溢出
--   使用随机数、三数取中等方式防止快排退化
--   采用多种排序算法混合缩小常数
+-   复杂度优化：
+    -   使用随机数、三数取中等方式防止快排退化
+
+-   常数优化：
+    -   在数据有序时直接退出
+    -   减少无用的交换、判断、循环
+    -   采用多种排序算法混合缩小常数
+
+
+
+
+[参考资料：oi-wiki 快速排序](https://oi-wiki.org/basic/quick-sort/)
+
+
+
+# 舞动的排序
+
+
+
+在这一部分，您需要：
+
+
+
+1.   看懂项目结构和逻辑
+2.   看懂至少一个排序可视化的源码
+3.   修改项目中对应的位置，将您的排序算法可视化展示
+
+
+
+需要的所有代码均存放于 `SortShow排序秀` 文件夹下，项目的逻辑如下：
+
+
+
+-   `main.cpp` 中实现了排序可视化的主界面
+    -   通过 `conio.h` 中的 `getch()` 函数获取输入字符
+    -   在 `switch()` 中控制排序可视化的入口
+    -   每个排序算法均通过 `Start()` 和 `Finish()` 完成初始化显示
+-   `Sort_Show.cpp` 中实现了若干可视化版本的排序算法
+    -   所有排序算法均需传入两个参数 `*array` 和 `length`，表示数组的头指针和长度
+-   `SortShow.h` 头文件定义了可视化所需的各种函数
+    -   `ShowText(x, y, bkcolor, color, str)` 可以在控制台 $(x,y)$ 坐标处显示背景色为 `bkcolor`，字体颜色为 `color` 的字符串 `str`，所有下发的示例代码均取 `bkcolor=0`，`color=15`。将 `str` 设为空格可以覆盖之前在此位置上显示的若干个字符。
+    -   调用 `SWAP(array, idx1, idx2)` 以交换 `array` 中下标为 `idx1` 和 `idx2` 的两项，并进行对应的可视化显示
+    -   调用 `ShowBars(x1, y1, val1, x2, y2, val2)` 在 $(x_1,y_1)$ 和 $(x_2, y_2)$ 处分别闪烁并显示两根长度为 $val_1$ 和 $val_2$ 的柱形图
+    -   以上若干函数中的坐标均有对应的变量 `col1`、`top` 控制，请参考下发代码中原本的实现进行指定
+
+
+
+在整个项目的编写中，您需要修改 `Main.cpp` 中的界面显示、`switch()` 下的函数调用，并在 `Sort_show.cpp` 中实现可视化版本的排序算法。
+
+在这里，您并不需要掌握 MIDI 数字接口的编写，只需要调用实现好的 `SWAP`、`ShowText()`、`ShowBars()` 函数就可以完成可视化的工作。
+
+
+
+-   [ ] 看懂 `Sorts_Show.cpp` 中至少一个排序算法可视化的实现
+
+
+
+您可能遇到的问题：
+
+-   通过在 `ShowText()` 函数中传入 `x=col1-k` 在左侧手动显示提示词或过程量，注意根据现实的字符长度修改 `k` 
+-   `ShowText()` 中 `Str` 传入的空格数不够导致原有的文字未被完全覆盖
+
+
+
+-   [ ] 针对优化后的一个排序算法，实现可视化实现
+
+
+
+*本人仿照下发代码实现的插入排序可视化，作为参考*
+
+```cpp
+// Sort_Show.cpp
+void Insert_Sort(int *array, int length) {
+	for (int i = 1; i < length; i++) {
+		int k = i;
+		ShowText(col1-4, top+i, 0, 15, "NOW");
+		for (int j = 0; j < i; j++) {
+			ShowText(col1-8, top+j, 0, 15, "INS");
+			if (array[j] > array[i]) {
+				k = j; break;
+			} else {
+				ShowBars(col1, top+j, array[j], col1, top+i, array[i]);
+			}
+			ShowText(col1-8, top+j, 0, 15, "   ");
+		}
+		for (int j = i; j > k; --j) {
+			SWAP(array, j, j-1);
+		}
+		ShowText(col1-8, top+k, 0, 15, "   ");
+		ShowText(col1-4, top+i, 0, 15, "   ");
+	}
+}
+
+// Main.cpp
+const char *str[]={	"1 ---- 重新生成原始数据(D)",
+                   "2 ---- 冒泡排序........(B)",
+                   "3 ---- 选择排序........(S)",
+                   "4 ---- 归并排序........(M)",
+                   "5 ---- 快速排序........(Q)",
+                   "6 ---- 插入排序........(I)",  // 添加这一行，主界面上的提示词
+                   "0 ---- 退出..........(ESC)",
+                   "请选择: "};
+
+// Main.cpp
+switch(choice)
+{
+    // 添加以下几行    
+    case '6':
+    case 'i':
+    case 'I':	col1 = 40;
+        		SetConsoleTitle("插入排序（Insertion Sorting）");
+        		Start();
+       			Insert_Sort(array, N);
+        		Finish();
+}
+```
 
 
 
@@ -166,9 +280,9 @@ target_link_libraries(KbMIDI winmm) # 添加这一句
 
 
 
-[参考链接](https://www.bilibili.com/opus/775532688542007328)
+[C++演奏《起风了》的代码](https://www.bilibili.com/opus/775532688542007328)
+
+[C++ 也能照着乐谱弹钢琴？让你的代码有 bgm 伴奏！ ](https://www.bilibili.com/video/BV1DH4y117ga/?share_source=copy_web&vd_source=6bdc78c36edc3731774f242dd88cfa5b)
 
 
-
-# 舞动的排序
 
