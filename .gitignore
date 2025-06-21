@@ -3,3 +3,6 @@
 .idea
 cmake-build-debug
 .reference
+.idea
+.github
+.vscode 
