@@ -1,5 +1,3 @@
-
-
 本文件为【2024-2025夏季学期《计算机编程实训》（0830A034）课程】作业操作文档
 
 # 前置工作
@@ -10,11 +8,11 @@
 
 
 
--   [ ] 安装CMake，并使用 `cmake --version` 验证安装
--   [ ] 将 g++ 添加至环境变量
--   [ ] 安装 Clion（可参考 [CLion安装、配置、使用、调试（完全小白向）](https://blog.csdn.net/annesede/article/details/133940779) ）
--   [ ] 从学习通中下载所有的代码文件（`Sorts`、`kbMIDI`、`SortShow排序秀`、`SortShow排序秀(NEW)`）
--   [ ] 使用 Clion 打开任意一个文件夹，如果出现文件编码问题，选择 GBK 后重新加载
+- [ ] 安装CMake，并使用 `cmake --version` 验证安装
+- [ ] 将 g++ 添加至环境变量
+- [ ] 安装 Clion（可参考 [CLion安装、配置、使用、调试（完全小白向）](https://blog.csdn.net/annesede/article/details/133940779) ）
+- [ ] 从学习通中下载所有的代码文件（`Sorts`、`kbMIDI`、`SortShow排序秀`、`SortShow排序秀(NEW)`）
+- [ ] 使用 Clion 打开任意一个文件夹，如果出现文件编码问题，选择 GBK 后重新加载
 
 
 
@@ -103,6 +101,7 @@ target_link_libraries(KbMIDI winmm) # 添加这一句
 
 1.   学习【冒泡排序】、【选择排序】、【快速排序】三种排序算法
 2.   对于每种排序算法，您需要完成“基本介绍”、“未优化的代码”、“数据分析（表格+柱状图）”、“优化后的代码”、“优化前后效果比较（表格+柱状图）”五个部分
+3.   完成多种排序算法的联合测试
 
 
 
@@ -210,18 +209,20 @@ target_link_libraries(KbMIDI winmm) # 添加这一句
 
 
 
--   [ ] 看懂 `Sorts_Show.cpp` 中至少一个排序算法可视化的实现
+- [ ] 看懂 `Sorts_Show.cpp` 中至少一个排序算法可视化的实现
 
 
 
 您可能遇到的问题：
+
+
 
 -   通过在 `ShowText()` 函数中传入 `x=col1-k` 在左侧手动显示提示词或过程量，注意根据现实的字符长度修改 `k` 
 -   `ShowText()` 中 `Str` 传入的空格数不够导致原有的文字未被完全覆盖
 
 
 
--   [ ] 针对优化后的一个排序算法，实现可视化实现
+- [ ] 针对优化后的一个排序算法，实现可视化实现
 
 
 
@@ -279,10 +280,72 @@ switch(choice)
 # MIDI 实现优化算法可视化及设计歌曲
 
 
+在这一部分，您需要：
 
-[C++演奏《起风了》的代码](https://www.bilibili.com/opus/775532688542007328)
+1. 了解一些基本的乐理知识，了解最基本的 MIDI 接口
+2. *学习多线程、`clock()` 等 c++ 特性，学习 MIDI editor，学习 mid 文件，以更好地完成您的任务*
+3. 解决 `习题课\习题课3\MIDIexample\MIDIexample.cpp` 中提到的若干问题
+4. 上网找一首您喜欢的音乐的乐谱，根据您编写的代码将其播放出来
 
-[C++ 也能照着乐谱弹钢琴？让你的代码有 bgm 伴奏！ ](https://www.bilibili.com/video/BV1DH4y117ga/?share_source=copy_web&vd_source=6bdc78c36edc3731774f242dd88cfa5b)
 
 
+关于基本的 MIDI 接口，您需要知道:
+
+```cpp
+// 打开 MIDI
+HMIDIOUT handle;
+midiOutOpen(&handle, 0, 0, 0, CALLBACK_NULL);
+
+// 发音
+DWORD dwMessage = (iVolume << 16) | (iFlip << 8) | iStatus        | iChannel;
+//      音量      |     音符     | 状态字节(高4位) | 通道(低4位)
+midiOutShortMsg(handle, dwMessage);
+
+// 关闭 MIDI
+midiOutClose(handle);
+```
+
+关于乐理知识，您需要知道：上述 MIDI 代码中的音量、音符、状态字节、通道代表了什么？有哪些可用的参数？
+
+上述提到的参数中最重要的是音符。您需要知道：可以通过 `((isSharp? C_Scale_s[lvl][x]: C_Scale[lvl][x]) << 8)` 调用如下定义的变量，以控制音高（`lvl`），音调（`x`）和是否升半音（`isSharp`）
+
+```cpp
+enum scale{
+    Rest=0,
+    C8=108,
+    B7=107,A7s=106,A7=105,G7s=104,G7=103,F7s=102,F7=101,E7=100,D7s=99, D7=98, C7s=97, C7=96,
+    B6=95, A6s=94, A6=93, G6s=92, G6=91, F6s=90, F6=89, E6=88, D6s=87, D6=86, C6s=85, C6=84,
+    B5=83, A5s=82, A5=81, G5s=80, G5=79, F5s=78, F5=77, E5=76, D5s=75, D5=74, C5s=73, C5=72,
+    B4=71, A4s=70, A4=69, G4s=68, G4=67, F4s=66, F4=65, E4=64, D4s=63, D4=62, C4s=61, C4=60,
+    B3=59, A3s=58, A3=57, G3s=56, G3=55, F3s=54, F3=53, E3=52, D3s=51, D3=50, C3s=49, C3=48,
+    B2=47, A2s=46, A2=45, G2s=44, G2=43, F2s=42, F2=41, E2=40, D2s=39, D2=38, C2s=37, C2=36,
+    B1=35, A1s=34, A1=33, G1s=32, G1=31, F1s=30, F1=29, E1=28, D1s=27, D1=26, C1s=25, C1=24,
+    B0=23, A0s=22, A0=21
+};
+const int C_Scale[7][7]={{C1,D1,E1,F1,G1,A1,B1},
+                            {C2,D2,E2,F2,G2,A2,B2},
+                            {C3,D3,E3,F3,G3,A3,B3},
+                            {C4,D4,E4,F4,G4,A4,B4},
+                            {C5,D5,E5,F5,G5,A5,B5},
+                            {C6,D6,E6,F6,G6,A6,B6},
+                            {C7,D7,E7,F7,G7,A7,B7}};
+const int C_Scale_s[7][7]={{C1s,D1s,-1,F1s,G1s,A1s,-1},
+                            {C2s,D2s,-1,F2s,G2s,A2s,-1},
+                            {C3s,D3s,-1,F3s,G3s,A3s,-1},
+                            {C4s,D4s,-1,F4s,G4s,A4s,-1},
+                            {C5s,D5s,-1,F5s,G5s,A5s,-1},
+                            {C6s,D6s,-1,F6s,G6s,A6s,-1},
+                            {C7s,D7s,-1,F7s,G7s,A7s,-1}};
+```
+
+可能的多音轨优化思路：
+
+1. 使用多线程同步播放两条音轨
+2. 调用 `clock()` 查询音符播放时长，如果该节拍未结束，则一直等待
+
+有用的链接：
+
+- [C++演奏《起风了》的代码](https://www.bilibili.com/opus/775532688542007328)
+- [C++ 也能照着乐谱弹钢琴？让你的代码有 bgm 伴奏！](https://www.bilibili.com/video/BV1DH4y117ga/?share_source=copy_web&vd_source=6bdc78c36edc3731774f242dd88cfa5b)，后半部分代码截自本项目，鸣谢
+- [找乐谱](https://www.everyonepiano.cn/Music.html)
 

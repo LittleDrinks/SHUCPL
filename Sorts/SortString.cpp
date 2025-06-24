@@ -16,14 +16,35 @@ using namespace std;
 
 void BubbleA(char (*str)[NUM], int size)			// 数组指针
 {
-	cout << "请完成函数 BubbleA 的定义，执行排序操作。" << endl;
-
+	for (int i = 0; i < size-1; i++)
+	{
+		for (int j = 0; j < size-1-j; j++)
+		{
+			if (strcmp(str[j],str[j+1])>0)          //将相邻的字符串进行比较，如果前者大于后者就交换它们的位置
+			{
+				char temp[NUM];
+				strcpy(temp,str[j]);
+				strcpy(str[j],str[j+1]);
+				strcpy(str[j+1],temp);
+			}
+		}
+	}
 }
 
-void BubbleB(char *str[], int size)					// 指针数组
+void BubbleB(char *str[], int size)             // 指针数组
 {
-	cout << "请完成函数 BubbleB 的定义，执行排序操作。" << endl;
-	
+	for (int i=0;i<size-1;i++)
+	{
+		for (int j=0;j<size-1-i;j++)
+		{
+			if (strcmp(str[j],str[j+1])>0)         //将相邻的字符串进行比较，如果前者大于后者就交换它们的位置
+			{
+				char *temp=str[j];
+				str[j]=str[j+1];
+				str[j+1]=temp;
+			}
+		}
+	}
 }
 
 template <typename T> void ShowStrings(const char *prompt, const T *strs, int n)

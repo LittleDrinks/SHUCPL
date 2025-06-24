@@ -152,7 +152,6 @@ public:
         mu.lock();
         std::cerr << "tune " << idx << " end at " << std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count() << "\n";
         mu.unlock();
-
     }
     void playSync(std::string s1, std::string s2 = "") {
         STOP = 0;

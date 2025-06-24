@@ -40,6 +40,7 @@ template <typename T> bool Check(const T *a, int size)				// ½ö¼ìÑéÊı×éÔªËØÊÇ·ñÂ
 // ÈıÖÖ»ù±¾µÄ£¨Ã»ÓĞÓÅ»¯µÄ£©ÅÅĞòËã·¨
 template <typename T> void Bubble(T *a, int size)	// Ã°ÅİÅÅĞò
 {
+	/*
 	T temp;											// ¶¨ÒåÒ»¸ö¾Ö²¿±äÁ¿£¬Êı¾İÀàĞÍÓëĞÎÊ½Êı¾İÀàĞÍÏàÍ¬
 	int i, j;
 	for(i=1; i<size; i++)							// ¹²½øĞĞ size-1 ÂÖ±È½ÏºÍ½»»»
@@ -57,10 +58,32 @@ template <typename T> void Bubble(T *a, int size)	// Ã°ÅİÅÅĞò
 		}
 		if (flag) { break; }
 	}
+	*/
+    int lastSwap = size - 1;            // ³õÊ¼»¯×îºó½»»»Î»ÖÃÎªÊı×éÄ©Î²
+    for (int i = 0; i < size - 1; i++)
+    {
+        bool swapped = false;         // ±¾ÂÖ½»»»±êÖ¾Î»£¨¼ì²âÊÇ·ñ·¢Éú½»»»£©
+        int currentSwap = -1;         // ¼ÇÂ¼±¾ÂÖ×îºó½»»»Î»ÖÃ
+        // ±éÀúÎ´ÅÅĞò²¿·Ö£¨Ö»Ğè±éÀúµ½ÉÏÂÖ×îºó½»»»Î»ÖÃ£©
+        for (int j = 0; j < lastSwap; j++)
+        {
+            if (a[j] > a[j+1])
+            {
+                T temp = a[j];
+                a[j] = a[j+1];
+                a[j+1] = temp;
+                swapped = true;      // ±ê¼Ç·¢Éú½»»»
+                currentSwap = j;     // ¸üĞÂ±¾ÂÖ×îºó½»»»Î»ÖÃ
+            }
+        }
+        if (!swapped) break;           // Èô±¾ÂÖÎŞ½»»»£¬ËµÃ÷ÒÑÍêÈ«ÓĞĞò
+        lastSwap = currentSwap;      // ¸üĞÂÏÂÒ»ÂÖµÄ±éÀú±ß½ç
+    }
 }
 
 template <typename T> void Select(T *a, int size)	// Ñ¡ÔñÅÅĞò
 {
+	/*
 	T temp;
 	int i, j, k=0;
 	for(i=1; i<size; i++)							// Ñ­»·size-1´Î
@@ -81,39 +104,100 @@ template <typename T> void Select(T *a, int size)	// Ñ¡ÔñÅÅĞò
 			break;
 		}
 	}
+	*/
+	int minIndex=0, maxIndex=0;
+	T temp;
+	for (int i = 0, x = size - 1; i < size / 2; i++, x--)
+	{
+		minIndex = i;
+		maxIndex = i;
+		for (int j = i + 1; j <= x; j++)
+		{
+			if (a[j] < a[minIndex]) minIndex = j;
+			if (a[j] > a[maxIndex]) maxIndex = j;
+		}
+		swap(a[i], a[minIndex]);
+		// Update the maxIndex if necessary
+		if (maxIndex == i)
+		{
+			maxIndex = minIndex;
+		}
+		swap(a[x], a[maxIndex]);
+	}
 }
 
-template <typename T>
-void Qsort(T *a, int size)
+template <typename T> void Qsort(T *a, int size)	// ¿ìËÙÅÅĞò
 {
-	using std::pair;
-	using std::stack;
+	/*
+	T pivot, temp;
+	int left=0, right=size-1;						// ÏÂ±ê£¨ÕûÊı£©
 
-	stack<pair<int, int>> stk;
-	stk.emplace(0, size - 1);
+	if(size<=1) return;
 
-	while (!stk.empty()) {
-		auto [left, right] = stk.top(); stk.pop();
-		if (left >= right) continue;   // Çø¼ä³¤¶È<=1£¬Ö±½ÓÌø¹ı
-
-		// Ëæ»úÑ¡Ôñpivot£¬½»»»µ½ÓÒ¶Ë
-		int id = UniformRand(left, right);
-		T pivot = a[id];
-		std::swap(a[id], a[right]);
-
-		// Ë«Ö¸Õëpartition
-		int i = left, j = right - 1;
-		while (i <= j) {
-			while (i <= j && a[i] <= pivot) ++i;
-			while (i <= j && a[j] >= pivot) --j;
-			if (i < j) std::swap(a[i], a[j]);
+	pivot = a[right];								// Ñ¡Ôñ×îºóÒ»¸öÖµÎª·Ö½çÖµ
+	do
+	{
+		while(left<right && a[left]<=pivot) left++;	// ´Ë´¦ "<=" ÊÇÈÃÓë·Ö½çÖµÏàµÈµÄÔªËØÔİÊ±ÁôÔÚÔ­µØ
+		while(left<right && a[right]>=pivot)right--;// ´Ë´¦ ">=" ÊÇÈÃÓë·Ö½çÖµÏàµÈµÄÔªËØÔİÊ±ÁôÔÚÔ­µØ
+		if(left < right)
+		{
+			temp=a[left]; a[left]=a[right]; a[right]=temp;
 		}
-		// °Ñpivot·Åµ½ÕıÈ·µÄÎ»ÖÃ
-		std::swap(a[i], a[right]);
+	}while(left < right);
+	a[size-1] = a[left]; a[left] = pivot;			// ÕÒµ½·Ö½çµã left
+	Qsort(a, left);									// µİ¹éµ÷ÓÃ(×ó²à²¿·Ö)
+	Qsort(a+left+1, size-left-1);					// µİ¹éµ÷ÓÃ(ÓÒ²à²¿·Ö)
+	*/
 
-		// ×ó°ë²¿·Ö[left, i-1]  ÓÒ°ë²¿·Ö[i+1, right]
-		stk.emplace(left, i - 1);
-		stk.emplace(i + 1, right);
+	// Ê¹ÓÃÕ»´æ´¢´ıÅÅĞòµÄ×ÓÊı×é£¨ÆğÊ¼Ö¸ÕëºÍ³¤¶È£©
+	std::stack<std::pair<T*, int>> stack;
+	stack.push(std::make_pair(a, size));
+
+	while (!stack.empty()) {
+		T* base = stack.top().first;
+		int len = stack.top().second;
+		stack.pop();
+
+		if (len <= 1) continue;
+
+		// Ëæ»úÑ¡Ôñ»ù×¼Öµ
+		T pivot = base[std::rand() % len];
+		int i = 0;    // µ±Ç°É¨ÃèÎ»ÖÃ
+		int j = 0;    // Ğ¡ÓÚ»ù×¼µÄÓÒ±ß½ç
+		int k = len;  // ´óÓÚ»ù×¼µÄ×ó±ß½ç
+
+		// ÈıÂ·»®·Ö£ºĞ¡ÓÚ | µÈÓÚ | ´óÓÚ
+		while (i < k) {
+			if (base[i] < pivot) {
+				// ½«Ğ¡ÓÚ»ù×¼µÄÔªËØ½»»»µ½Ç°²¿
+				T temp = base[i];
+				base[i] = base[j];
+				base[j] = temp;
+				++i;
+				++j;
+			} else if (pivot < base[i]) {
+				// ½«´óÓÚ»ù×¼µÄÔªËØ½»»»µ½ºó²¿
+				--k;
+				T temp = base[i];
+				base[i] = base[k];
+				base[k] = temp;
+			} else {
+				// µÈÓÚ»ù×¼µÄÔªËØÁôÔÚÖĞ¼ä
+				++i;
+			}
+		}
+
+		// »ñÈ¡×ÓÊı×é³¤¶È
+		int left_len = j;           // Ğ¡ÓÚ»ù×¼µÄ²¿·Ö
+		int right_len = len - k;    // ´óÓÚ»ù×¼µÄ²¿·Ö
+
+		// ½«×ÓÊı×éÈëÕ»£¨ÏÈÓÒºó×óÒÔ±£Ö¤×ó×ÓÊı×éÏÈ´¦Àí£©
+		if (right_len > 1) {
+			stack.push(std::make_pair(base + k, right_len));
+		}
+		if (left_len > 1) {
+			stack.push(std::make_pair(base, left_len));
+		}
 	}
 }
 
